@@ -32,9 +32,11 @@ class CompanyController extends Controller
     {
         $prefecture = Prefecture::all();
         $is_create = true;
+        $is_update = true;
         return view('backend.company.form', [
             'prefecture' => $prefecture,
-            'is_create' => $is_create
+            'is_create' => $is_create,
+            'is_update' => $is_update
         ]);
     }
 
@@ -131,6 +133,15 @@ class CompanyController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'name'=> 'required',
+            'email' => 'required|email',
+            'postcode' => 'required',
+            'prefecture_id' => 'required',
+            'city' => 'required',
+            'local' => 'required',
+
+        ]);
         
         $company = Company::find($id);
         
@@ -146,6 +157,7 @@ class CompanyController extends Controller
             
         }
         $getNamePrefecture = $request->prefecture_id;
+         
         $getIdPrefecture = Prefecture::select('id')->where('display_name', $getNamePrefecture)->first();
         $request->merge([
             'prefecture_id' => $getIdPrefecture->id,

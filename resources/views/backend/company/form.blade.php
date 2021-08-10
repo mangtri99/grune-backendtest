@@ -24,7 +24,7 @@
                         </ul>
                     </div>
                     @endif --}}
-                    <form method="POST" action="{{$is_create ? route('company.store') : route('company.update', ['id' => $company->id])}}" enctype="multipart/form-data">
+                    <form id="company-form" method="POST" action="{{$is_create ? route('company.store') : route('company.update', ['id' => $company->id])}}" enctype="multipart/form-data">
                         {{ csrf_field() }}
                         <div class="row">
                             <div class="form-group px-2 px-md-0">
@@ -33,7 +33,7 @@
                                     <strong class="field-title">Name</strong>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-9 col-lg-10 col-content">
-                                    <input type="text" name="name" class="form-control" value="{{$is_create ? old('name') : $company->name}}">
+                                    <input type="text" name="name" class="form-control validate[required]" value="{{$is_create ? old('name') : $company->name}}" data-prompt-position = "bottomLeft:0,11">
                                     @foreach ($errors->get('name') as $error)
                                         <span style="color: red">{{$error}}</span>
                                     @endforeach
@@ -45,7 +45,7 @@
                                     <strong class="field-title">Email</strong>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-9 col-lg-10 col-content">
-                                    <input type="email" name="email" class="form-control" value="{{$is_create ? old('email') : $company->email}}">
+                                    <input type="email" name="email" class="form-control validate[required, email]" value="{{$is_create ? old('email') : $company->email}}" data-prompt-position = "bottomLeft:0,11">
                                     @foreach ($errors->get('email') as $error)
                                         <span style="color: red">{{$error}}</span>
                                     @endforeach
@@ -60,10 +60,10 @@
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-9 col-lg-10 col-content">
                                     <div>
-                                        <input id="postcode" type="number" name="postcode" class="form-control w-100" value="{{$is_create ? old('postcode') : $company->postcode}}">
-                                        <div style="margin-top: 1em;">
-                                            <button id="btnCheckPostCode" class="btn btn-primary"> Search </button>
-                                            <button id="btnResetPostCode" class="btn btn-primary" style="margin-left: 1.5em"> Reset </button>
+                                        <input id="postcode" type="number" name="postcode" class="form-control w-100 validate[required]" value="{{$is_create ? old('postcode') : $company->postcode}}" data-prompt-position = "bottomLeft:0,11">
+                                        <div style="margin-top: 2em;">
+                                            <button id="btnCheckPostCode" class="btn btn-primary"> Search PostCode</button>
+                                            <button id="btnResetPostCode" class="btn btn-primary" style="margin-left: 1.5em"> Reset PostCode </button>
                                         </div>
                                     </div>
                                     @foreach ($errors->get('postcode') as $error)
@@ -77,7 +77,7 @@
                                     <strong class="field-title">Prefecture</strong>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-9 col-lg-10 col-content">
-                                    <select class="form-control" id="prefecture" name="prefecture_id">
+                                    <select class="form-control validate[required]" id="prefecture" name="prefecture_id" data-prompt-position = "bottomLeft:0,30">
                                         <option value="">Select Prefecture</option>
                                         @foreach ($prefecture as $prefec)
                                             @if($is_create)
@@ -87,9 +87,8 @@
                                             @endif
                                             
                                         @endforeach
-                                        <input id="input_prefecture" type="hidden" name="prefecture_id">
+                                        <input id="input_prefecture" type="hidden" readonly name="prefecture_id" value="{{ $is_create ? old('prefecture_id') : $company->prefecture_id}}" >
                                     </select>
-                                    
                                     
                                     @foreach ($errors->get('prefecture_id') as $error)
                                         <span style="color: red">{{$error}}</span>
@@ -102,7 +101,7 @@
                                     <strong class="field-title">City</strong>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-9 col-lg-10 col-content">
-                                    <input id="city" type="text" name="city" class="form-control" value="{{ $is_create ? old('city') : $company->city}}">
+                                    <input id="city" type="text" name="city" class="form-control validate[required]" value="{{ $is_create ? old('city') : $company->city}}" data-prompt-position = "bottomLeft:0,11">
                                     @foreach ($errors->get('city') as $error)
                                         <span style="color: red">{{$error}}</span>
                                     @endforeach
@@ -114,7 +113,7 @@
                                     <strong class="field-title">Local</strong>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-9 col-lg-10 col-content">
-                                    <input id="local" type="text" name="local" class="form-control" value="{{$is_create ? old('local') : $company->local}}">
+                                    <input id="local" type="text" name="local" class="form-control validate[required]" value="{{$is_create ? old('local') : $company->local}}" data-prompt-position = "bottomLeft:0,11">
                                     @foreach ($errors->get('local') as $error)
                                         <span style="color: red">{{$error}}</span>
                                     @endforeach
@@ -162,7 +161,7 @@
                                     <strong class="field-title">Phone</strong>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-9 col-lg-10 col-content">
-                                    <input id="phone" type="number" name="phone" class="form-control" value="{{$is_create ? old('phone') : $company->phone}}">
+                                    <input id="phone" type="number" name="phone" class="form-control validate[phone]" value="{{$is_create ? old('phone') : $company->phone}}">
                                     @foreach ($errors->get('phone') as $error)
                                         <span style="color: red">{{$error}}</span>
                                     @endforeach
@@ -211,11 +210,11 @@
                                     <strong class="field-title">Image</strong>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-9 col-lg-10 col-content">
-                                    <input id="inputImg" type="file" name="image_file" class="form-control mb-3" value="{{$is_create ? old('image') : $company->image}}">
+                                    <input id="inputImg" type="file" name="image_file" class="form-control mb-3 {{$is_create ? 'validate[required]' : ''}}" value="{{$is_create ? old('image') : $company->image}}" data-prompt-position = "bottomLeft:0,11">
                                     @foreach ($errors->get('image_file') as $error)
                                         <span class="d-block" style="color: red">{{$error}}</span>
                                     @endforeach
-                                    <div class="d-block">
+                                    <div class="d-block" style="margin-top: 20px">
                                         @if($is_create)
                                             <img id="imgPreview" class="mt-3" src="{{asset('img/no-image/no-image.jpg')}}" width="250" alt="">
                                         @else
@@ -228,7 +227,7 @@
                             </div>
                         </div>
                         <div class="text-center mt-4">
-                            <button type="submit" class="btn btn-primary p-2">Submit</button>
+                            <button type="submit" id="send" class="btn btn-primary p-2">Submit</button>
                         </div>
                     </form>
                 </div>
@@ -251,9 +250,11 @@
 @endsection
 
 @section('js-scripts')
+    <script src="{{ asset('bower_components/bootstrap/js/tooltip.js') }}"></script>
     <script src="{{ asset('js/3rdparty/validation-engine/jquery.validationEngine-en.js') }}"></script>
     <script src="{{ asset('js/3rdparty/validation-engine/jquery.validationEngine.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="{{ asset('js/backend/company/form.js')}}"></script>
     <script>
        $(function() {
             $('#prefecture').select2();
@@ -263,15 +264,16 @@
                     imgPreview.src = URL.createObjectURL(file)
                 }
             }
+            //get selected value input
+            $("#prefecture").on("change", function(){
+                
+                let prefectureId = $("#prefecture option:selected").val();
+                $("#input_prefecture").val(prefectureId);
+                console.log(prefectureId);
+            });
 
             //validate input number only
-            $("#postcode", "#phone", "#fax").keyup(function (event) {
-                if (event.which !== 8 && event.which !== 0 && event.which < 48 || event.which > 57) {
-                    $(this).val(function (index, value) {
-                        return value.replace(/\D/g, "");
-                    });
-                }
-            });
+            
 
             //if postcode has value, set readonly to some input (for edit page)
             if($("#postcode").val()){

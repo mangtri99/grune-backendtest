@@ -162,7 +162,7 @@
                                     <strong class="field-title">Phone</strong>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-9 col-lg-10 col-content">
-                                    <input type="number" name="phone" class="form-control" value="{{$is_create ? old('phone') : $company->phone}}">
+                                    <input id="phone" type="number" name="phone" class="form-control" value="{{$is_create ? old('phone') : $company->phone}}">
                                     @foreach ($errors->get('phone') as $error)
                                         <span style="color: red">{{$error}}</span>
                                     @endforeach
@@ -175,7 +175,7 @@
                                     <strong class="field-title">FAX</strong>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-9 col-lg-10 col-content">
-                                    <input type="text" name="fax" class="form-control" value="{{$is_create ? old('fax') : $company->fax}}">
+                                    <input id="fax" type="number" name="fax" class="form-control" value="{{$is_create ? old('fax') : $company->fax}}">
                                     @foreach ($errors->get('fax') as $error)
                                         <span style="color: red">{{$error}}</span>
                                     @endforeach
@@ -199,7 +199,7 @@
                                     <strong class="field-title">License Number</strong>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-9 col-lg-10 col-content">
-                                    <input type="text" name="license_number" class="form-control" value="{{$is_create ? old('license_number') : $company->license_number}}">
+                                    <input id="licensce_number" type="text" name="license_number" class="form-control" value="{{$is_create ? old('license_number') : $company->license_number}}">
                                     @foreach ($errors->get('license_number') as $error)
                                         <span style="color: red">{{$error}}</span>
                                     @endforeach
@@ -243,12 +243,19 @@
 
 @section('css-scripts')
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+        .select2-container .select2-selection--single{
+            height: 35px !important;
+        }
+    </style>
 @endsection
 
 @section('js-scripts')
+    <script src="{{ asset('js/3rdparty/validation-engine/jquery.validationEngine-en.js') }}"></script>
+    <script src="{{ asset('js/3rdparty/validation-engine/jquery.validationEngine.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
-        $(document).ready(function() {
+       $(function() {
             $('#prefecture').select2();
             inputImg.onchange = evt => {
                 const [file] = inputImg.files
@@ -256,6 +263,17 @@
                     imgPreview.src = URL.createObjectURL(file)
                 }
             }
+
+            //validate input number only
+            $("#postcode", "#phone", "#fax").keyup(function (event) {
+                if (event.which !== 8 && event.which !== 0 && event.which < 48 || event.which > 57) {
+                    $(this).val(function (index, value) {
+                        return value.replace(/\D/g, "");
+                    });
+                }
+            });
+
+            //if postcode has value, set readonly to some input (for edit page)
             if($("#postcode").val()){
                 $("#postcode").prop('readonly', true);
                 $("#city").prop('readonly', true);
@@ -264,6 +282,7 @@
                 $("#input_prefecture").prop('readonly', true);
             } 
 
+            //reset button
             $("#btnResetPostCode").on('click', function(e){
                 e.preventDefault();
                 $("#postcode").val("").prop('readonly', false);;
@@ -273,10 +292,11 @@
                 $("#input_prefecture").val("").prop('readonly', false);
             })
             
-            
+            //search button
             $("#btnCheckPostCode").on('click', function(e){
                 e.preventDefault();
                 const postcode = $("#postcode").val();
+                
                 $.ajax({
                     type: 'GET',
                     url: '{{URL::to('/api/admin/postcode/getPostCode')}}' + '/' + postcode,
@@ -296,8 +316,6 @@
                 })
 
             });
-            // function checkPostCode() {
-            //                }
         });
     </script>
 @endsection
